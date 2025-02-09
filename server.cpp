@@ -8,61 +8,61 @@
 #include <unistd.h>
 
 Server::Server() : _serverSocket(-1), _port(0) {
-    // Le constructeur initialise le descripteur à -1
+    // Constructor initializes _serverSocket to -1 indicating it is not created yet.
 }
 
 Server::~Server() {
-    // On ferme le socket s'il est ouvert pour libérer les ressources
+    // Close the socket if it is open to free resources.
     if (_serverSocket != -1) {
         close(_serverSocket);
-        std::cout << "Socket serveur fermée." << std::endl;
+        std::cout << "Server socket closed." << std::endl;
     }
 }
 
 void Server::start(const char* portStr) {
-    // --- Conversion du port ---
+    // --- Step 1: Convert the port ---
     _port = std::atoi(portStr);
     if (_port <= 0) {
-        throw std::invalid_argument("Port invalide");
+        throw std::invalid_argument("Invalid port number");
     }
 
-    // --- Création du socket ---
+    // --- Step 2: Create the server socket ---
     _serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (_serverSocket < 0) {
-        throw std::runtime_error("Erreur lors de la création du socket serveur");
+        throw std::runtime_error("Error creating the server socket");
     }
-    std::cout << "Socket serveur créé avec succès: " << _serverSocket << std::endl;
+    std::cout << "Server socket created successfully: " << _serverSocket << std::endl;
 
-    // --- Configuration de l'adresse du serveur ---
+    // --- Step 3: Configure the server address ---
     sockaddr_in serverAddr;
     std::memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;                // IPv4
-    serverAddr.sin_port = htons(_port);              // Conversion du port au format réseau
-    serverAddr.sin_addr.s_addr = INADDR_ANY;         // Écoute sur toutes les interfaces
+    serverAddr.sin_port = htons(_port);              // Convert the port to network byte order
+    serverAddr.sin_addr.s_addr = INADDR_ANY;         // Listen on all available interfaces
 
-    // --- Association (bind) du socket à l'adresse ---
+    // --- Step 4: Bind the socket to the address ---
     if (bind(_serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) {
         close(_serverSocket);
-        throw std::runtime_error("Bind échoué");
+        throw std::runtime_error("Bind failed");
     }
-    std::cout << "Bind effectué avec succès sur le port: " << _port << std::endl;
+    std::cout << "Bind successful on port: " << _port << std::endl;
 
-    // --- Passage en mode écoute ---
-    if (listen(_serverSocket, 100) < 0) {  // 100 est le nombre maximum de connexions en attente
+    // --- Step 5: Put the socket in listening mode ---
+    if (listen(_serverSocket, 100) < 0) {  // 100 is the maximum number of pending connections
         close(_serverSocket);
-        throw std::runtime_error("Listen échoué");
+        throw std::runtime_error("Listen failed");
     }
-    std::cout << "Le serveur est en écoute..." << std::endl;
+    std::cout << "Server is now listening..." << std::endl;
 
-    // --- Configuration en mode non bloquant ---
+    // --- Step 6: Set the socket to non-blocking mode ---
     int flags = fcntl(_serverSocket, F_GETFL, 0);
     if (flags < 0) {
         close(_serverSocket);
-        throw std::runtime_error("Erreur lors de fcntl F_GETFL");
+        throw std::runtime_error("Error getting socket flags via fcntl F_GETFL");
     }
     if (fcntl(_serverSocket, F_SETFL, flags | O_NONBLOCK) < 0) {
         close(_serverSocket);
-        throw std::runtime_error("Erreur lors de fcntl F_SETFL pour O_NONBLOCK");
+        throw std::runtime_error("Error setting O_NONBLOCK via fcntl F_SETFL");
     }
-    std::cout << "Le socket serveur est désormais en mode non bloquant." << std::endl;
+    std::cout << "Server socket is now set to non-blocking mode." << std::endl;
 }
