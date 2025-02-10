@@ -23,23 +23,23 @@ class Client
 	Client();
 	~Client();
 
-	// MEMBER FUNTIONS
+	
 	void	stopClient();
 	void	startClient(char **argv);
 
-	// GETTERS
+	
 		int						getFDSocket() const {return _fd_socket; }
 		bool					getRegistered() const {return _registered; }
 		const std::string		getNickname() const {return _nickName; }
 		const std::string		getUsername() const {return _userName; }
-		const std::string		getRealame() const {return _realName; }
+		const std::string		getRealName() const {return _realName; }
 	
-	// SETTERS
+	
 		void		setFDSocket(const int new_socket) {_fd_socket = new_socket; }
 		void		setRegistered(const bool is_registered) {_registered = is_registered; }
 		void		setNickname(const std::string nickName) {_nickName = nickName; }
 		void		setUsername(const std::string userName) {_userName = userName; }
-		void		setRealame(const std::string realName) {_realName = realName; }
+		void		setRealName(const std::string realName) {_realName = realName; }
 	
 
 } ;
