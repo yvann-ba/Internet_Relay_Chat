@@ -12,11 +12,9 @@ all: $(NAME)
 $(NAME): $(OBJS)
 	$(CPP) $(CPPFLAGS) $(OBJS) -o $(NAME)
 
-# Ensure the subdirectory of OBJ_DIR exists before compiling
 $(OBJ_DIR)/%.o: %.cpp | create_obj_dirs
 	$(CPP) -c $< -o $@ $(CPPFLAGS)
 
-# Create required directories
 create_obj_dirs:
 	mkdir -p $(OBJ_DIR)/src
 
