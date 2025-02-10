@@ -10,6 +10,7 @@ public:
 
     // Method to start the server by passing the port as a parameter.
     void start(const char* portStr);
+    void run();
 
 private:
     int _serverSocket; // The server socket file descriptor.
