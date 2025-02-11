@@ -37,9 +37,9 @@ class Client
 	
 		void		setFDSocket(const int new_socket) {_fd_socket = new_socket; }
 		void		setRegistered(const bool is_registered) {_registered = is_registered; }
-		void		setNickname(const std::string nickName) {_nickName = nickName; }
-		void		setUsername(const std::string userName) {_userName = userName; }
-		void		setRealName(const std::string realName) {_realName = realName; }
+		void		setNickname(std::string nickName) {_nickName = nickName; }
+		void		setUsername(std::string userName) {_userName = userName; }
+		void		setRealName(std::string realName) {_realName = realName; }
 	
 
 } ;

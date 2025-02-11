@@ -4,6 +4,9 @@ Client::Client()
 {
 	_fd_socket = -1;
 	_registered = false;
+	_nickName = "";
+	_userName = "";
+	_realName = "";
 	return ;
 }
 
