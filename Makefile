@@ -3,7 +3,8 @@ CPP = /bin/c++
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
-SRCS = main.cpp src/server.cpp src/client.cpp
+SRCS = main.cpp src/server.cpp src/client.cpp src/utils.cpp \
+		src/cmds/passCommand.cpp
 OBJ_DIR = ./obj
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 
@@ -16,7 +17,7 @@ $(OBJ_DIR)/%.o: %.cpp | create_obj_dirs
 	$(CPP) -c $< -o $@ $(CPPFLAGS)
 
 create_obj_dirs:
-	mkdir -p $(OBJ_DIR)/src
+	mkdir -p $(OBJ_DIR)/src/cmds
 
 clean:
 	rm -rf $(OBJ_DIR)

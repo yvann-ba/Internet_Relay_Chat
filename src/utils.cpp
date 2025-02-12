@@ -1,6 +1,7 @@
 #include <sstream>
 #include <string>
 #include <iostream>
+#include "../includes/utils.hpp"
 
 std::string normalizeSpaces(const std::string& input)
 {
