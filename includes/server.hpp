@@ -6,29 +6,34 @@
 #include <vector>
 #include <map>
 #include "client.hpp"
+#include "channel.hpp"
 
 # define SIZE_MSG    1024
 # define MAX_CLIENT    100
 
 class Server {
-	public:
-		Server();
-		~Server();
+    public:
+        Server();
+        ~Server();
 
-		void start(const char* portStr, const char* password);
-		void run();
+        void start(const char* portStr, const char* password);
+        void run();
 
-		// void closeClient(int i);
-		void	sendError(Client& client, std::string errorCode,std::string errorMsg);
-		bool	checkIsRegistered(int i);
-		void	processClientCommand(std::string* clientBuffer, int clientIndex);
+        void sendError(Client& client, std::string errorCode, std::string errorMsg);
+        bool checkIsRegistered(int client_fd);
+        void processClientCommand(std::string* clientBuffer, int client_fd);
 
-	private:
-		int			_serverSocket;
-		int			_port;
-		std::string	_password;
-		
-		std::map<int, Client*> _clients;
+        // Nouvelles commandes pour les channels (en utilisant le terme "commande")
+        void joinCommand(const std::string &parameters, int client_fd);
+        void privmsgCommand(const std::string &parameters, int client_fd);
+
+    private:
+        int _serverSocket;
+        int _port;
+        std::string _password;
+        std::map<int, Client*> _clients;
+        // Map de gestion des channels (clé : nom du canal, valeur : objet Channel)
+        std::map<std::string, Channel*> _channels;
 };
 
 #endif
