@@ -1,13 +1,7 @@
 #include "../includes/client.hpp"
 
-Client::Client()
-{
-	_fd_socket = -1;
-	_registered = false;
-	_nickName = "";
-	_userName = "";
-	_realName = "";
-	return ;
+Client::Client() : _fd_socket(-1), _registered(false), _nickName(""), _userName(""), _realName("") {
+    
 }
 
 Client::~Client()
@@ -36,7 +30,7 @@ void	Client::startClient(char **argv)
 
 	sockClient.sin_family = AF_INET;
 	sockClient.sin_port = htons(atoi(argv[1]));
-	sockClient.sin_addr.s_addr = inet_addr(argv[1]);
+	sockClient.sin_addr.s_addr = inet_addr(argv[2]);
 
 	connect(_fd_socket, (struct sockaddr *)&sockClient, sizeof(sockClient));
 

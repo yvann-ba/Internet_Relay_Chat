@@ -1,6 +1,4 @@
 #include "../../includes/server.hpp"
-// #include <sstream>
-// #include <string>
 
 void Server::passCommand(std::string content, int index)
 {
@@ -15,7 +13,6 @@ void Server::passCommand(std::string content, int index)
 
         if (!_clients[index]->getNickname().empty() && !_clients[index]->getUsername().empty())
         {
-            // Use std::stringstream for the port
             std::stringstream portStream;
             portStream << _port;
             std::string portStr = portStream.str();

@@ -38,6 +38,7 @@ class Server {
 
 		// Commands
 		void passCommand(std::string content, int index);
+		void nickCommand(std::string content, int index);
 
 
 	private:

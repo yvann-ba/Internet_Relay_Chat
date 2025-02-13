@@ -24,3 +24,24 @@ std::string normalizeSpaces(const std::string& input)
 
 	return result;
 }
+
+int countWords(const std::string &str)
+{
+    std::istringstream stream(str);
+    std::string word;
+    int count = 0;
+
+    while (stream >> word) {
+        count++;
+    }
+    return count;
+}
+
+bool isDisplayable(const std::string &str) {
+    for (size_t i = 0; i < str.length(); i++) {
+        if (!isprint(str[i])) {
+            return false;
+        }
+    }
+    return true;
+}

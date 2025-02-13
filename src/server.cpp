@@ -157,14 +157,14 @@ void	Server::processClientCommand(std::string* clientBuffer, int clientIndex)
 			parameters = currentLine.substr(spacePosition + 1);
 		}
 
-		if (command == "NICK")
+		if (command == "PASS")
+			passCommand(parameters, clientIndex);
+		else if (command == "NICK")
 			std::cout << "nickCommand(parameters, clientIndex);";
 		else if (command == "USER")
 			std::cout << "userCommand(parameters, clientIndex);";
-		else if (command == "QUIT")
-			std::cout << "quitCommand(clientIndex);";
-		else if (command == "PASS")
-			passCommand(parameters, clientIndex);
+			else if (command == "QUIT")
+				std::cout << "quitCommand(clientIndex);";
 		else if (checkIsRegistered(clientIndex - 1))
 		{
 			if (command == "PRIVMSG")
@@ -229,7 +229,6 @@ void Server::run() {
 				
 				Client* newClient = new Client();
 				newClient->setFDSocket(client_fd);
-				std::cout << "POPPPPP " << client_fd << std::endl;
 				_clients[i] = newClient;
 
 				std::cout << "New connection accepted, client socket: " << client_fd << std::endl;
