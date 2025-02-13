@@ -21,14 +21,17 @@ Server::~Server() {
     for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
         delete it->second;
     }
+    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        delete it->second;
+    }
 }
 
 void Server::start(const char* portStr, const char* password) {
     _port = std::atoi(portStr);
-    if (_port <= 0) {
-        throw std::invalid_argument("Invalid port number");
+    if (_port < 1024 || _port > 65535) {
+        throw std::invalid_argument("Port number must be between 1024 and 65535");
     }
-    _password = password; 
+    _password = password;
 
     _serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (_serverSocket < 0) {
@@ -36,7 +39,6 @@ void Server::start(const char* portStr, const char* password) {
     }
     std::cout << "Server socket created successfully: " << _serverSocket << std::endl;
 
-    // Activation de SO_REUSEADDR pour réutiliser le port rapidement
     int opt = 1;
     if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
         close(_serverSocket);
@@ -210,6 +212,68 @@ void	Server::processClientCommand(std::string* clientBuffer, int clientIndex)
 	}
 }
 
+void Server::joinCommand(const std::string &parameters, int client_fd) {
+    std::string channelName = parameters;
+    if (channelName.empty()) {
+        sendError(*_clients[client_fd], "461", "JOIN :Not enough parameters");
+        return;
+    }
+    
+    Channel* channel = NULL;
+    if (_channels.find(channelName) == _channels.end()) {
+        channel = new Channel(channelName);
+        _channels[channelName] = channel;
+    } else {
+        channel = _channels[channelName];
+    }
+    channel->addMember(client_fd);
+
+    
+    std::string joinMsg = ":" + _clients[client_fd]->getNickname() + " JOIN " + channelName + "\r\n";
+    send(_clients[client_fd]->getFDSocket(), joinMsg.c_str(), joinMsg.size(), MSG_NOSIGNAL);
+    channel->broadcastMessage(joinMsg, client_fd);
+}
+
+void Server::privmsgCommand(const std::string &parameters, int client_fd) {
+    size_t spacePos = parameters.find(" ");
+    if (spacePos == std::string::npos) {
+        sendError(*_clients[client_fd], "461", "PRIVMSG :Not enough parameters");
+        return;
+    }
+    std::string target = parameters.substr(0, spacePos);
+    std::string message = parameters.substr(spacePos + 1);
+    if (!message.empty() && message[0] == ':')
+        message.erase(0, 1);
+    std::string fullMsg = ":" + _clients[client_fd]->getNickname() + " PRIVMSG " + target + " :" + message + "\r\n";
+
+    if (target[0] == '#') {
+        
+        if (_channels.find(target) != _channels.end()) {
+            Channel* channel = _channels[target];
+            if (!channel->isMember(client_fd)) {
+                sendError(*_clients[client_fd], "442", target + " :You're not on that channel");
+                return;
+            }
+            channel->broadcastMessage(fullMsg, client_fd);
+        } else {
+            sendError(*_clients[client_fd], "403", target + " :No such channel");
+        }
+    } else {
+        
+        bool found = false;
+        for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+            if (it->second->getNickname() == target) {
+                send(it->second->getFDSocket(), fullMsg.c_str(), fullMsg.size(), MSG_NOSIGNAL);
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            sendError(*_clients[client_fd], "401", target + " :No such nick/channel");
+        }
+    }
+}
+
 void Server::run() {
     std::vector<pollfd> pollfds;
     pollfd serverPoll;
@@ -218,7 +282,7 @@ void Server::run() {
     serverPoll.events = POLLIN;
     pollfds.push_back(serverPoll);
 
-    // Map pour stocker les buffers incomplets par socket client
+    
     std::map<int, std::string> clientBuffers;
 
     while (true) {
@@ -228,7 +292,7 @@ void Server::run() {
             break;
         }
 
-        // Vérifier le socket serveur
+        
         if (pollfds[0].revents & POLLIN) {
             int client_fd = accept(_serverSocket, NULL, NULL);
             if (client_fd >= 0) {
@@ -249,15 +313,15 @@ void Server::run() {
             }
         }
 
-        // Parcourir les sockets clients
+        
         for (size_t j = 1; j < pollfds.size(); j++) {
             if (pollfds[j].revents & POLLIN) {
                 char buffer[1024];
                 int n = recv(pollfds[j].fd, buffer, sizeof(buffer) - 1, 0);
                 if (n < 0) {
-                    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+                    if (errno == EAGAIN || errno == EWOULDBLOCK)
                         continue;
-                    } else {
+                    else {
                         std::cerr << "Error on socket " << pollfds[j].fd << ": " << strerror(errno) << std::endl;
                         close(pollfds[j].fd);
                         delete _clients[pollfds[j].fd];
@@ -283,12 +347,6 @@ void Server::run() {
                     processClientCommand(&clientBuffers[pollfds[j].fd], pollfds[j].fd);
                 }
                 std::cout << "Message received from socket " << pollfds[j].fd << ": " << buffer << std::endl;
-
-                // Diffuser le message aux autres clients (broadcast)
-                for (size_t k = 1; k < pollfds.size(); k++) {
-                    if (k == j) continue;
-                    send(pollfds[k].fd, buffer, n, 0);
-                }
             }
         }
     }

@@ -18,17 +18,18 @@
 #include <cstdio>
 #include <sstream>
 #include <string>
+#include "channel.hpp"
 
 # define SIZE_MSG    1024
 # define MAX_CLIENT    100
 
 class Server {
-	public:
-		Server();
-		~Server();
+    public:
+        Server();
+        ~Server();
 
-		void start(const char* portStr, const char* password);
-		void run();
+        void start(const char* portStr, const char* password);
+        void run();
 
 		// void closeClient(int i);
 		void	sendError(int client_fd, int error_code, const std::string &param);
@@ -48,6 +49,22 @@ class Server {
 		std::string	_password;
 		
 		std::map<int, Client*> _clients;
+        void sendError(Client& client, std::string errorCode, std::string errorMsg);
+        bool checkIsRegistered(int client_fd);
+        void processClientCommand(std::string* clientBuffer, int client_fd);
+
+        
+        void joinCommand(const std::string &parameters, int client_fd);
+        void privmsgCommand(const std::string &parameters, int client_fd);
+        
+
+    private:
+        int _serverSocket;
+        int _port;
+        std::string _password;
+        std::map<int, Client*> _clients;
+        
+        std::map<std::string, Channel*> _channels;
 };
 
 #endif

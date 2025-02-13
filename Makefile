@@ -7,6 +7,7 @@ SRCS = main.cpp src/server.cpp src/client.cpp src/utils.cpp \
 		src/cmds/passCommand.cpp \
 		src/cmds/nickCommand.cpp \
 		src/cmds/userCommand.cpp
+		src/channel.cpp
 
 
 OBJ_DIR = ./obj
