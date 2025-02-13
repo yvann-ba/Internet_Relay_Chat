@@ -10,6 +10,7 @@
 #include <poll.h>
 #include <errno.h>
 #include <cstdio>
+#include <sstream>
 
 Server::Server() : _serverSocket(-1), _port(0), _password("") {}
 
@@ -215,7 +216,7 @@ void	Server::processClientCommand(std::string* clientBuffer, int clientIndex)
 void Server::joinCommand(const std::string &parameters, int client_fd) {
     std::string channelName = parameters;
     if (channelName.empty()) {
-        sendError(*_clients[client_fd], "461", "JOIN :Not enough parameters");
+        sendError(client_fd, 461, "JOIN :Not enough parameters");
         return;
     }
     
@@ -237,7 +238,7 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
 void Server::privmsgCommand(const std::string &parameters, int client_fd) {
     size_t spacePos = parameters.find(" ");
     if (spacePos == std::string::npos) {
-        sendError(*_clients[client_fd], "461", "PRIVMSG :Not enough parameters");
+        sendError(client_fd, 461, "PRIVMSG :Not enough parameters");
         return;
     }
     std::string target = parameters.substr(0, spacePos);
@@ -251,12 +252,12 @@ void Server::privmsgCommand(const std::string &parameters, int client_fd) {
         if (_channels.find(target) != _channels.end()) {
             Channel* channel = _channels[target];
             if (!channel->isMember(client_fd)) {
-                sendError(*_clients[client_fd], "442", target + " :You're not on that channel");
+                sendError(client_fd, 442, target + " :You're not on that channel");
                 return;
             }
             channel->broadcastMessage(fullMsg, client_fd);
         } else {
-            sendError(*_clients[client_fd], "403", target + " :No such channel");
+            sendError(client_fd, 403, target + " :No such channel");
         }
     } else {
         
@@ -269,7 +270,7 @@ void Server::privmsgCommand(const std::string &parameters, int client_fd) {
             }
         }
         if (!found) {
-            sendError(*_clients[client_fd], "401", target + " :No such nick/channel");
+            sendError(client_fd, 401, target + " :No such nick/channel");
         }
     }
 }
