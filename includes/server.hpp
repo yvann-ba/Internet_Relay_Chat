@@ -23,16 +23,17 @@ class Server {
         bool checkIsRegistered(int client_fd);
         void processClientCommand(std::string* clientBuffer, int client_fd);
 
-        // Nouvelles commandes pour les channels (en utilisant le terme "commande")
+        
         void joinCommand(const std::string &parameters, int client_fd);
         void privmsgCommand(const std::string &parameters, int client_fd);
+        
 
     private:
         int _serverSocket;
         int _port;
         std::string _password;
         std::map<int, Client*> _clients;
-        // Map de gestion des channels (clé : nom du canal, valeur : objet Channel)
+        
         std::map<std::string, Channel*> _channels;
 };
 

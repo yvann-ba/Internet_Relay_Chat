@@ -29,8 +29,8 @@ Server::~Server() {
 
 void Server::start(const char* portStr, const char* password) {
     _port = std::atoi(portStr);
-    if (_port <= 0) {
-        throw std::invalid_argument("Invalid port number");
+    if (_port < 1024 || _port > 65535) {
+        throw std::invalid_argument("Port number must be between 1024 and 65535");
     }
     _password = password;
 
@@ -101,7 +101,7 @@ bool Server::checkIsRegistered(int client_fd) {
 void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
     std::string tempBuffer = normalizeSpaces(*clientBuffer);
     if (tempBuffer.find("\n") == std::string::npos) {
-        return; // Commande incomplète, attendre la suite
+        return; 
     }
     *clientBuffer = "";
     while (!tempBuffer.empty()) {
@@ -134,7 +134,7 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
         else if (command == "PASS")
             std::cout << "processCommand: PASS " << parameters << " (fd " << client_fd << ")" << std::endl;
         else if (command == "CAP" || command == "PING" || command == "PONG" || command == "WHO")
-            ; // Ignorer pour l'instant
+            ; 
         else if (command == "JOIN")
             joinCommand(parameters, client_fd);
         else if (command == "PRIVMSG")
@@ -157,7 +157,7 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
         sendError(*_clients[client_fd], "461", "JOIN :Not enough parameters");
         return;
     }
-    // Vérifier si le canal existe
+    
     Channel* channel = NULL;
     if (_channels.find(channelName) == _channels.end()) {
         channel = new Channel(channelName);
@@ -167,7 +167,7 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
     }
     channel->addMember(client_fd);
 
-    // Envoyer un message JOIN au client et diffuser le JOIN aux membres du canal
+    
     std::string joinMsg = ":" + _clients[client_fd]->getNickname() + " JOIN " + channelName + "\r\n";
     send(_clients[client_fd]->getFDSocket(), joinMsg.c_str(), joinMsg.size(), MSG_NOSIGNAL);
     channel->broadcastMessage(joinMsg, client_fd);
@@ -186,7 +186,7 @@ void Server::privmsgCommand(const std::string &parameters, int client_fd) {
     std::string fullMsg = ":" + _clients[client_fd]->getNickname() + " PRIVMSG " + target + " :" + message + "\r\n";
 
     if (target[0] == '#') {
-        // Message vers un canal
+        
         if (_channels.find(target) != _channels.end()) {
             Channel* channel = _channels[target];
             if (!channel->isMember(client_fd)) {
@@ -198,7 +198,7 @@ void Server::privmsgCommand(const std::string &parameters, int client_fd) {
             sendError(*_clients[client_fd], "403", target + " :No such channel");
         }
     } else {
-        // Message privé vers un utilisateur
+        
         bool found = false;
         for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
             if (it->second->getNickname() == target) {
@@ -221,7 +221,7 @@ void Server::run() {
     serverPoll.events = POLLIN;
     pollfds.push_back(serverPoll);
 
-    // Map pour accumuler les buffers de réception par socket client
+    
     std::map<int, std::string> clientBuffers;
 
     while (true) {
@@ -231,7 +231,7 @@ void Server::run() {
             break;
         }
 
-        // Vérifier le socket serveur pour de nouvelles connexions
+        
         if (pollfds[0].revents & POLLIN) {
             int client_fd = accept(_serverSocket, NULL, NULL);
             if (client_fd >= 0) {
@@ -252,7 +252,7 @@ void Server::run() {
             }
         }
 
-        // Parcourir les sockets clients
+        
         for (size_t j = 1; j < pollfds.size(); j++) {
             if (pollfds[j].revents & POLLIN) {
                 char buffer[1024];
