@@ -1,6 +1,6 @@
 #include "../includes/client.hpp"
 
-Client::Client() : _fd_socket(-1), _registered(false), _nickName(""), _userName(""), _realName("") {
+Client::Client() : _fd_socket(-1), _registered(false), _passOk(false), _nickName(""), _userName(""), _realName("") {
     
 }
 
@@ -17,6 +17,7 @@ void	Client::stopClient()
 		close(_fd_socket);
 	_fd_socket = -1;
 	_registered = false;
+	_passOk = false;
 	_nickName = "";
 	_userName = "";
 	_realName = "";

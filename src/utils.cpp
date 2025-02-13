@@ -1,32 +1,29 @@
-#include <sstream>
-#include <string>
-#include <iostream>
 #include "../includes/utils.hpp"
+#include <sstream>
+#include <cctype>
 
-std::string normalizeSpaces(const std::string& input)
-{
-	std::string result;
-	bool inSpaces = false;
+std::string normalizeSpaces(const std::string& input) {
+    std::string result;
+    bool inSpaces = false;
 
-	for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
-		char ch = *it;
+    for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
+        char ch = *it;
 
-		if (ch == ' ') {
-			if (!inSpaces) {
-				result += ' ';
-				inSpaces = true;
-			}
-		} else {
-			result += ch;
-			inSpaces = false;
-		}
-	}
+        if (ch == ' ') {
+            if (!inSpaces) {
+                result += ' ';
+                inSpaces = true;
+            }
+        } else {
+            result += ch;
+            inSpaces = false;
+        }
+    }
 
-	return result;
+    return result;
 }
 
-int countWords(const std::string &str)
-{
+int countWords(const std::string &str) {
     std::istringstream stream(str);
     std::string word;
     int count = 0;

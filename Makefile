@@ -4,7 +4,11 @@ CPP = /bin/c++
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g
 
 SRCS = main.cpp src/server.cpp src/client.cpp src/utils.cpp \
-		src/cmds/passCommand.cpp
+		src/cmds/passCommand.cpp \
+		src/cmds/nickCommand.cpp \
+		src/cmds/userCommand.cpp
+
+
 OBJ_DIR = ./obj
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
 

@@ -1,5 +1,5 @@
 #include "../includes/server.hpp"
-#include "utils.cpp"
+#include "../includes/utils.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -168,11 +168,17 @@ void	Server::processClientCommand(std::string* clientBuffer, int clientIndex)
 		if (command == "PASS")
 			passCommand(parameters, clientIndex);
 		else if (command == "NICK")
-			std::cout << "nickCommand(parameters, clientIndex);";
+			nickCommand(parameters, clientIndex);
 		else if (command == "USER")
-			std::cout << "userCommand(parameters, clientIndex);";
+			userCommand(parameters, clientIndex);
 			else if (command == "QUIT")
 				std::cout << "quitCommand(clientIndex);";
+        else if (command == "INFO") {
+            std::cout << _clients[clientIndex]->getFDSocket() << std::endl;
+            std::cout << _clients[clientIndex]->getNickname() << std::endl;
+            std::cout << _clients[clientIndex]->getUsername() << std::endl;
+            std::cout << _clients[clientIndex]->getRealName() << std::endl;
+        }
 		else if (checkIsRegistered(clientIndex - 1))
 		{
 			if (command == "PRIVMSG")

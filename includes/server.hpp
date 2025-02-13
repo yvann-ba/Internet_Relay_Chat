@@ -37,8 +37,9 @@ class Server {
 		void	processClientCommand(std::string* clientBuffer, int clientIndex);
 
 		// Commands
-		void passCommand(std::string content, int index);
-		void nickCommand(std::string content, int index);
+		void	passCommand(std::string content, int index);
+		void	nickCommand(std::string content, int index);
+		void	userCommand(std::string content, int index);
 
 
 	private:
