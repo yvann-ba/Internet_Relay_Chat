@@ -142,12 +142,6 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
             userCommand(parameters, client_fd);
         else if (command == "QUIT")
             quitCommand(parameters, client_fd);
-        else if (command == "INFO") {
-            std::cout << _clients[client_fd]->getFDSocket() << std::endl;
-            std::cout << _clients[client_fd]->getNickname() << std::endl;
-            std::cout << _clients[client_fd]->getUsername() << std::endl;
-            std::cout << _clients[client_fd]->getRealName() << std::endl;
-        }
         else if (checkIsRegistered(client_fd)) {
             if (command == "PRIVMSG")
                 privmsgCommand(parameters, client_fd);
