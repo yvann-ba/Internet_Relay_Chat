@@ -1,4 +1,4 @@
-# 🌐 ft_irc
+# 🌐 Internet_Relay_Chat
 
 ### **A lightweight IRC (Internet Relay Chat) server implementation in C++98, featuring fundamental IRC functionalities and client communication over a network**
 
