@@ -73,7 +73,3 @@
 - **Memory**: No memory leaks
 
 </details>
-
----
-
-## Made with C++98 💻
