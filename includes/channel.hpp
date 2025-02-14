@@ -10,21 +10,21 @@ public:
     Channel(const std::string &name);
     ~Channel();
 
-    // Basic getters
+    
     const std::string &getName() const;
     const std::string &getTopic() const;
     const std::vector<int> &getMembers() const;
 
-    // Topic management
+    
     void setTopic(const std::string &topic);
 
-    // Member management
+    
     void addMember(int client_fd);
     void removeMember(int client_fd);
     bool isMember(int client_fd) const;
     void broadcastMessage(const std::string &msg, int sender_fd) const;
 
-    // Channel mode management
+    
     bool isInviteOnly() const;
     void setInviteOnly(bool flag);
 
@@ -39,13 +39,13 @@ public:
     void setUserLimit(int limit);
     void removeUserLimit();
 
-    // Operator management
+    
     void addOperator(int client_fd);
     void removeOperator(int client_fd);
     bool isOperator(int client_fd) const;
     const std::vector<int> &getOperators() const;
 
-    // Invitation management
+    
     void inviteUser(int client_fd);
     bool isInvited(int client_fd) const;
     void removeInvite(int client_fd);
@@ -56,7 +56,7 @@ private:
     std::string _topic;
     std::vector<int> _members;
 
-    // Channel mode variables
+    
     bool _inviteOnly;
     bool _topicRestricted;
     std::string _channelKey;

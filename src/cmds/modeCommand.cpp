@@ -15,7 +15,7 @@ void Server::modeCommand(const std::string &parameters, int client_fd) {
         return;
     }
     Channel* channel = _channels[channelName];
-    // If only the channel name is provided, display current modes.
+    
     std::string modes;
     iss >> modes;
     if (modes.empty()) {
@@ -34,7 +34,7 @@ void Server::modeCommand(const std::string &parameters, int client_fd) {
         sendServ(_clients[client_fd]->getFDSocket(), reply.str());
         return;
     }
-    // Only channel operators can change modes.
+    
     if (!channel->isOperator(client_fd)) {
         sendError(client_fd, 482, channelName + " :You're not a channel operator");
         return;
@@ -99,7 +99,7 @@ void Server::modeCommand(const std::string &parameters, int client_fd) {
                     sendError(client_fd, 472, std::string(1, mode) + " :is unknown mode char to me");
                     break;
             }
-        } else { // sign == '-'
+        } else { 
             switch(mode) {
                 case 'i':
                     channel->setInviteOnly(false);

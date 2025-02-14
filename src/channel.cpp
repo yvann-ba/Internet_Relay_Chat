@@ -26,17 +26,17 @@ void Channel::setTopic(const std::string &topic) {
 void Channel::addMember(int client_fd) {
     if (!isMember(client_fd)) {
         _members.push_back(client_fd);
-        // If first member, automatically grant operator privileges.
+        
         if (_members.size() == 1)
             _operators.push_back(client_fd);
-        // Remove invitation if present.
+        
         removeInvite(client_fd);
     }
 }
 
 void Channel::removeMember(int client_fd) {
     _members.erase(std::remove(_members.begin(), _members.end(), client_fd), _members.end());
-    // Also remove from operators.
+    
     removeOperator(client_fd);
 }
 
@@ -52,7 +52,7 @@ void Channel::broadcastMessage(const std::string &msg, int sender_fd) const {
     }
 }
 
-// Invite-only mode
+
 bool Channel::isInviteOnly() const {
     return _inviteOnly;
 }
@@ -61,7 +61,7 @@ void Channel::setInviteOnly(bool flag) {
     _inviteOnly = flag;
 }
 
-// Topic restricted mode
+
 bool Channel::isTopicRestricted() const {
     return _topicRestricted;
 }
@@ -70,7 +70,7 @@ void Channel::setTopicRestricted(bool flag) {
     _topicRestricted = flag;
 }
 
-// Channel key management
+
 const std::string &Channel::getChannelKey() const {
     return _channelKey;
 }
@@ -83,7 +83,7 @@ void Channel::removeChannelKey() {
     _channelKey = "";
 }
 
-// User limit management
+
 int Channel::getUserLimit() const {
     return _userLimit;
 }
@@ -96,7 +96,7 @@ void Channel::removeUserLimit() {
     _userLimit = 0;
 }
 
-// Operator management
+
 void Channel::addOperator(int client_fd) {
     if (!isOperator(client_fd)) {
         _operators.push_back(client_fd);
@@ -115,7 +115,7 @@ const std::vector<int> &Channel::getOperators() const {
     return _operators;
 }
 
-// Invitation management
+
 void Channel::inviteUser(int client_fd) {
     if (!isInvited(client_fd)) {
         _invited.push_back(client_fd);

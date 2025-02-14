@@ -24,7 +24,7 @@ void Server::kickCommand(const std::string &parameters, int client_fd) {
         sendError(client_fd, 482, channelName + " :You're not a channel operator");
         return;
     }
-    // Find the target client by nickname.
+    
     int target_fd = -1;
     for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
         if (it->second->getNickname() == targetNick) {
@@ -42,10 +42,10 @@ void Server::kickCommand(const std::string &parameters, int client_fd) {
         oss << " :" << comment;
     oss << "\r\n";
     std::string kickMsg = oss.str();
-    // Broadcast the kick message.
+    
     channel->broadcastMessage(kickMsg, client_fd);
-    // Also send the message to the target.
+    
     send(_clients[target_fd]->getFDSocket(), kickMsg.c_str(), kickMsg.size(), MSG_NOSIGNAL);
-    // Remove the target from the channel.
+    
     channel->removeMember(target_fd);
 }

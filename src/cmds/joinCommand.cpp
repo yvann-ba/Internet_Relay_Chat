@@ -7,7 +7,7 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
     std::string channelName;
     std::string providedKey;
     iss >> channelName;
-    iss >> providedKey; // Optional key parameter
+    iss >> providedKey; 
 
     if (channelName.empty()) {
         sendError(client_fd, 461, "JOIN :Not enough parameters");
@@ -22,23 +22,23 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
         channel = _channels[channelName];
     }
 
-    // Check if client is already a member
+    
     if (channel->isMember(client_fd))
         return;
 
-    // If channel is invite-only, verify the invitation.
+    
     if (channel->isInviteOnly() && !channel->isInvited(client_fd)) {
         sendError(client_fd, 473, channelName + " :Invite-only channel");
         return;
     }
 
-    // If a channel key is set, verify the provided key.
+    
     if (!channel->getChannelKey().empty() && providedKey != channel->getChannelKey()) {
         sendError(client_fd, 475, channelName + " :Bad channel key");
         return;
     }
 
-    // Enforce user limit if set.
+    
     if (channel->getUserLimit() > 0 && channel->getMembers().size() >= (size_t)channel->getUserLimit()) {
         sendError(client_fd, 471, channelName + " :Channel is full");
         return;
