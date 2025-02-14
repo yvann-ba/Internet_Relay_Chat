@@ -1,5 +1,6 @@
-#include "../includes/server.hpp"
+#include "server_bonus.hpp"
 #include "../includes/utils.hpp"
+#include "bot.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
@@ -13,7 +14,7 @@
 #include <sstream>
 
 
-Server::Server() : _serverSocket(-1), _port(0), _password("") {}
+Server::Server() : _serverSocket(-1), _port(0), _password(""){}
 
 Server::~Server() {
     if (_serverSocket != -1) {
@@ -26,7 +27,6 @@ Server::~Server() {
     for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         delete it->second;
     }
-    
 }
 
 void Server::start(const char* portStr, const char* password) {
@@ -76,6 +76,11 @@ void Server::start(const char* portStr, const char* password) {
         throw std::runtime_error("Error setting non-blocking mode");
     }
     std::cout << "Server socket is now set to non-blocking mode." << std::endl;
+    _bot = new Bot(this, "bot");
+    if (_bot == NULL) {
+        close(_serverSocket);
+        throw std::runtime_error("Error creating bot");
+    }
 }
 
 bool Server::checkIsRegistered(int client_fd) {
@@ -146,6 +151,9 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
         else if (checkIsRegistered(client_fd)) {
             if (command == "PRIVMSG")
                 privmsgCommand(parameters, client_fd);
+            else if (command == "BOT") {
+                _bot->respondToMessage(parameters, client_fd);
+            }
             else if (command == "JOIN")
                 joinCommand(parameters, client_fd);
             else if (command == "INVITE")
