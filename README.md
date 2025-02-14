@@ -73,3 +73,7 @@
 - **Memory**: No memory leaks
 
 </details>
+
+---
+
+#### 🖥️ Works on Linux, Mac and WSL(for Windows)
