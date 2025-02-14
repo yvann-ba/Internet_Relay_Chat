@@ -12,10 +12,9 @@
 #include <cstdio>
 #include <sstream>
 
-// Constructor
+
 Server::Server() : _serverSocket(-1), _port(0), _password("") {}
 
-// Destructor
 Server::~Server() {
     if (_serverSocket != -1) {
         close(_serverSocket);
@@ -110,7 +109,7 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
 
     tempBuffer = normalizeSpaces(*clientBuffer);
     if (tempBuffer.find("\n") == std::string::npos) {
-        // Command is incomplete; wait for more data.
+        
         return;
     }
     *clientBuffer = "";

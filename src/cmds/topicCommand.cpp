@@ -1,8 +1,8 @@
 #include "../../includes/server.hpp"
 
-// TOPIC command: displays or sets the topic of a channel
+
 void Server::topicCommand(const std::string &parameters, int client_fd) {
-    // Expected format: "<channel> [<topic>]"
+    
     size_t spacePos = parameters.find(" ");
     std::string channelName;
     std::string topic;
@@ -32,11 +32,11 @@ void Server::topicCommand(const std::string &parameters, int client_fd) {
     }
     
     if (topic.empty()) {
-        // Display current topic
+        
         std::string reply = ":" + _clients[client_fd]->getNickname() + " TOPIC " + channelName + " :" + channel->getTopic() + "\r\n";
         sendServ(_clients[client_fd]->getFDSocket(), reply);
     } else {
-        // Set new topic and notify channel members
+        
         channel->setTopic(topic);
         std::string topicMsg = ":" + _clients[client_fd]->getNickname() + " TOPIC " + channelName + " :" + topic + "\r\n";
         channel->broadcastMessage(topicMsg, client_fd);
