@@ -26,12 +26,11 @@ class Client
 
 	
 	void	stopClient();
-	void	startClient(char **argv);
 
 	
 		int						getFDSocket() const {return _fd_socket; }
 		bool					getRegistered() const {return _registered; }
-		bool                    getPassOk() const { return _passOk; }
+		bool					getPassOk() const { return _passOk; }
 		const std::string		getNickname() const {return _nickName; }
 		const std::string		getUsername() const {return _userName; }
 		const std::string		getRealName() const {return _realName; }
@@ -39,7 +38,7 @@ class Client
 	
 		void		setFDSocket(const int new_socket) {_fd_socket = new_socket; }
 		void		setRegistered(const bool is_registered) {_registered = is_registered; }
-		void        setPassOk(const bool passOk) { _passOk = passOk; }
+		void		setPassOk(const bool passOk) { _passOk = passOk; }
 		void		setNickname(std::string nickName) {_nickName = nickName; }
 		void		setUsername(std::string userName) {_userName = userName; }
 		void		setRealName(std::string realName) {_realName = realName; }
