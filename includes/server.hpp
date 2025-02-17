@@ -5,11 +5,14 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <csignal>
 #include "client.hpp"
 #include "channel.hpp"
 
 # define SIZE_MSG    1024
 # define MAX_CLIENT  100
+
+extern volatile sig_atomic_t g_running;
 
 class Server {
 public:

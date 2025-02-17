@@ -14,7 +14,7 @@
 #include <sstream>
 
 
-Server::Server() : _serverSocket(-1), _port(0), _password(""){}
+Server::Server() : _serverSocket(-1), _port(0), _password(""), _bot(NULL){}
 
 Server::~Server() {
     if (_serverSocket != -1) {
@@ -27,6 +27,7 @@ Server::~Server() {
     for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         delete it->second;
     }
+    delete _bot;
 }
 
 void Server::start(const char* portStr, const char* password) {
@@ -188,7 +189,7 @@ void Server::run() {
 
     std::map<int, std::string> clientBuffers;
 
-    while (true) {
+    while (g_running) {
         int ret = poll(pollfds.data(), pollfds.size(), 100);
         if (ret < 0) {
             perror("poll");
