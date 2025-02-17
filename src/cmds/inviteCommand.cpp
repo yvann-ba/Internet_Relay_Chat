@@ -3,8 +3,7 @@
 
 void Server::inviteCommand(const std::string &parameters, int client_fd) {
     std::istringstream iss(parameters);
-    std::string targetNick;
-    std::string channelName;
+    std::string targetNick, channelName;
     iss >> targetNick >> channelName;
 
     if (targetNick.empty() || channelName.empty()) {
@@ -41,12 +40,12 @@ void Server::inviteCommand(const std::string &parameters, int client_fd) {
     }
     
     channel->inviteUser(target_fd);
-
     
+    // Send confirmation to the inviter.
     std::string inviteMsg = ":" + _clients[client_fd]->getNickname() + " INVITE " + targetNick + " " + channelName + "\r\n";
     sendServ(_clients[client_fd]->getFDSocket(), inviteMsg);
-
     
-    std::string notifyMsg = ":server INVITE " + targetNick + " " + channelName + " by " + _clients[client_fd]->getNickname() + "\r\n";
+    // Notify the invited user.
+    std::string notifyMsg = ":localhost INVITE " + targetNick + " " + channelName + " by " + _clients[client_fd]->getNickname() + "\r\n";
     send(_clients[target_fd]->getFDSocket(), notifyMsg.c_str(), notifyMsg.size(), MSG_NOSIGNAL);
 }

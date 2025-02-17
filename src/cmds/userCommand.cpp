@@ -3,8 +3,7 @@
 #include <sstream>
 #include <iostream>
 
-void Server::userCommand(std::string content, int index)
-{
+void Server::userCommand(std::string content, int index) {
     if (!_clients[index]->getPassOk()) {
         sendError(_clients[index]->getFDSocket(), 464, "");
         return;

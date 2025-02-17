@@ -1,11 +1,8 @@
 #include "../../includes/server.hpp"
 
-
 void Server::topicCommand(const std::string &parameters, int client_fd) {
-    
     size_t spacePos = parameters.find(" ");
-    std::string channelName;
-    std::string topic;
+    std::string channelName, topic;
     if (spacePos == std::string::npos) {
         channelName = parameters;
     } else {
@@ -32,13 +29,12 @@ void Server::topicCommand(const std::string &parameters, int client_fd) {
     }
     
     if (topic.empty()) {
-        
         std::string reply = ":" + _clients[client_fd]->getNickname() + " TOPIC " + channelName + " :" + channel->getTopic() + "\r\n";
         sendServ(_clients[client_fd]->getFDSocket(), reply);
     } else {
-        
         channel->setTopic(topic);
         std::string topicMsg = ":" + _clients[client_fd]->getNickname() + " TOPIC " + channelName + " :" + topic + "\r\n";
         channel->broadcastMessage(topicMsg, client_fd);
+        sendServ(_clients[client_fd]->getFDSocket(), topicMsg);
     }
 }
