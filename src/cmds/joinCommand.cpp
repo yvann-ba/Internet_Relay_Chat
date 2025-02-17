@@ -13,6 +13,11 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
         sendError(client_fd, 461, "JOIN :Not enough parameters");
         return;
     }
+
+    if (channelName[0] != '#') {
+        sendError(client_fd, 403, channelName + " :Invalid channel name. Must start with '#'");
+        return;
+    }
     
     Channel* channel = NULL;
     if (_channels.find(channelName) == _channels.end()) {
@@ -22,28 +27,24 @@ void Server::joinCommand(const std::string &parameters, int client_fd) {
         channel = _channels[channelName];
     }
 
-    
     if (channel->isMember(client_fd))
         return;
 
-    
     if (channel->isInviteOnly() && !channel->isInvited(client_fd)) {
         sendError(client_fd, 473, channelName + " :Invite-only channel");
         return;
     }
 
-    
     if (!channel->getChannelKey().empty() && providedKey != channel->getChannelKey()) {
         sendError(client_fd, 475, channelName + " :Bad channel key");
         return;
     }
 
-    
     if (channel->getUserLimit() > 0 && channel->getMembers().size() >= (size_t)channel->getUserLimit()) {
         sendError(client_fd, 471, channelName + " :Channel is full");
         return;
     }
-    
+
     channel->addMember(client_fd);
 
     std::string joinMsg = ":" + _clients[client_fd]->getNickname() + " JOIN " + channelName + "\r\n";

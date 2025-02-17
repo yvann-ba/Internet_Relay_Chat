@@ -12,7 +12,6 @@
 #include <cstdio>
 #include <sstream>
 
-
 Server::Server() : _serverSocket(-1), _port(0), _password("") {}
 
 Server::~Server() {
@@ -26,7 +25,6 @@ Server::~Server() {
     for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
         delete it->second;
     }
-    
 }
 
 void Server::start(const char* portStr, const char* password) {
@@ -76,6 +74,7 @@ void Server::start(const char* portStr, const char* password) {
         throw std::runtime_error("Error setting non-blocking mode");
     }
     std::cout << "Server socket is now set to non-blocking mode." << std::endl;
+
 }
 
 bool Server::checkIsRegistered(int client_fd) {
@@ -92,13 +91,13 @@ bool Server::checkIsRegistered(int client_fd) {
 
 void Server::sendServ(int fd, const std::string &msg) {
     if (fd < 0) {
-        std::cerr << "Error: Invalid file descriptor\n";
+        std::cerr << "Error: Invalid file descriptor" << std::endl;
         return;
     }
     std::string formattedMsg = msg + "\r\n";
     ssize_t bytesSent = send(fd, formattedMsg.c_str(), formattedMsg.length(), MSG_NOSIGNAL | MSG_DONTWAIT);
     if (bytesSent == -1)
-        std::cerr << "Error: Failed to send message\n";
+        std::cerr << "Error: Failed to send message" << std::endl;
 }
 
 void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
@@ -110,7 +109,6 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
 
     tempBuffer = normalizeSpaces(*clientBuffer);
     if (tempBuffer.find("\n") == std::string::npos) {
-        
         return;
     }
     *clientBuffer = "";
@@ -170,6 +168,17 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
     }
 }
 
+// Helper function: Remove client from all channels with logging
+void Server::removeClientFromChannels(int client_fd) {
+    for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+        Channel* channel = it->second;
+        if (channel->isMember(client_fd)) {
+            std::cout << "Removing client " << client_fd << " from channel " << channel->getName() << std::endl;
+            channel->removeMember(client_fd);
+        }
+    }
+}
+
 void Server::run() {
     std::vector<pollfd> pollfds;
     pollfd serverPoll;
@@ -216,20 +225,26 @@ void Server::run() {
                         continue;
                     else {
                         std::cerr << "Error on socket " << pollfds[j].fd << ": " << strerror(errno) << std::endl;
-                        close(pollfds[j].fd);
-                        delete _clients[pollfds[j].fd];
-                        _clients.erase(pollfds[j].fd);
-                        clientBuffers.erase(pollfds[j].fd);
+                        int client_fd = pollfds[j].fd;
+                        std::cout << "Cleaning up client " << client_fd << " due to error." << std::endl;
+                        removeClientFromChannels(client_fd);
+                        close(client_fd);
+                        delete _clients[client_fd];
+                        _clients.erase(client_fd);
+                        clientBuffers.erase(client_fd);
                         pollfds.erase(pollfds.begin() + j);
                         j--;
                         continue;
                     }
                 } else if (n == 0) {
                     std::cout << "Client on socket " << pollfds[j].fd << " disconnected." << std::endl;
-                    close(pollfds[j].fd);
-                    delete _clients[pollfds[j].fd];
-                    _clients.erase(pollfds[j].fd);
-                    clientBuffers.erase(pollfds[j].fd);
+                    int client_fd = pollfds[j].fd;
+                    std::cout << "Cleaning up client " << client_fd << " after disconnection." << std::endl;
+                    removeClientFromChannels(client_fd);
+                    close(client_fd);
+                    delete _clients[client_fd];
+                    _clients.erase(client_fd);
+                    clientBuffers.erase(client_fd);
                     pollfds.erase(pollfds.begin() + j);
                     j--;
                     continue;

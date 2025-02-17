@@ -45,6 +45,8 @@ public:
     void topicCommand(const std::string &parameters, int client_fd);
     void kickCommand(const std::string &parameters, int client_fd);
     void modeCommand(const std::string &parameters, int client_fd);
+    void removeClientFromChannels(int client_fd);
+
 
 private:
     
