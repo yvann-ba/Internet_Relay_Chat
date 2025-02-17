@@ -12,6 +12,6 @@ void Server::passCommand(std::string content, int index)
     }
     _clients[index]->setPassOk(true);
 
-    std::string msg = "Correct password, " + _clients[index]->getNickname();
+    std::string msg = "Correct password";
     sendServ(_clients[index]->getFDSocket(), msg);
 }
