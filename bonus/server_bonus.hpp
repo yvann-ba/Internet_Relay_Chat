@@ -5,9 +5,12 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <csignal>
 #include "../includes/client.hpp"
 #include "../includes/channel.hpp"
 #include "bot.hpp"
+
+extern volatile sig_atomic_t g_running;
 
 # define SIZE_MSG    1024
 # define MAX_CLIENT  100

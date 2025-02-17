@@ -2,7 +2,7 @@
 #include <iostream>
 #include "server_bonus.hpp"
 
-Bot::Bot(Server* server, const std::string& botName) 
+Bot::Bot(Server* server, const std::string& botName)
     : _server(server), _botName(botName) {
     std::cout << "Bot " << _botName << " initialized." << std::endl;
 }
