@@ -18,9 +18,10 @@ Bot::~Bot() {}
 
 
 void Bot::sendBotMessage(int clientFd, const std::string &target, const std::string &msg) {
-    std::string formattedMsg = "PRIVMSG " + target + " :" + msg + "\r\n";
+    std::string formattedMsg = ":" + _botName + " PRIVMSG " + target + " :" + msg;
     _server->sendServ(clientFd, formattedMsg);
 }
+
 
 
 void Bot::respondToMessage(const std::string& message, int clientFd) {
@@ -74,12 +75,12 @@ void Bot::respondToMessage(const std::string& message, int clientFd) {
 
 
 void Bot::registerBot(const std::string &password, int clientFd) {
-    std::string passCmd = "PASS " + password + "\r\n";
+    std::string passCmd = "PASS " + password;
     _server->sendServ(clientFd, passCmd);
 
-    std::string nickCmd = "NICK " + _botName + "\r\n";
+    std::string nickCmd = "NICK " + _botName;
     _server->sendServ(clientFd, nickCmd);
 
-    std::string userCmd = "USER " + _botName + " 0 * :" + _botName + "\r\n";
+    std::string userCmd = "USER " + _botName + " 0 * :" + _botName;
     _server->sendServ(clientFd, userCmd);
 }
