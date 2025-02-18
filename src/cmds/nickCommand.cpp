@@ -2,8 +2,7 @@
 #include "../../includes/utils.hpp"
 #include <sstream>
 
-void Server::nickCommand(std::string content, int index)
-{
+void Server::nickCommand(std::string content, int index) {
     if (!_clients[index]->getPassOk()) {
         sendError(_clients[index]->getFDSocket(), 464, "");
         return;
@@ -35,7 +34,7 @@ void Server::nickCommand(std::string content, int index)
         std::string msg = ":localhost:" + portStr + " 001 " + content + " :Registered nickname " + content;
         sendServ(_clients[index]->getFDSocket(), msg);
     } else {
-        std::string msg = ":" + _clients[index]->getNickname() + "!@localhost:" +  " NICK :" + content;
+        std::string msg = ":" + _clients[index]->getNickname() + "!@localhost:" + " NICK :" + content;
         sendServ(_clients[index]->getFDSocket(), msg);
     }
     _clients[index]->setNickname(content);

@@ -11,15 +11,18 @@ void Server::kickCommand(const std::string &parameters, int client_fd) {
         sendError(client_fd, 461, "KICK :Not enough parameters");
         return;
     }
+    
     if (_channels.find(channelName) == _channels.end()) {
         sendError(client_fd, 403, channelName + " :No such channel");
         return;
     }
-    Channel *channel = _channels[channelName];
+    Channel* channel = _channels[channelName];
+    
     if (!channel->isMember(client_fd)) {
         sendError(client_fd, 442, channelName + " :You're not on that channel");
         return;
     }
+    
     if (!channel->isOperator(client_fd)) {
         sendError(client_fd, 482, channelName + " :You're not a channel operator");
         return;
@@ -36,6 +39,7 @@ void Server::kickCommand(const std::string &parameters, int client_fd) {
         sendError(client_fd, 401, targetNick + " :No such nick/channel");
         return;
     }
+    
     std::ostringstream oss;
     oss << ":" << _clients[client_fd]->getNickname() << " KICK " << channelName << " " << targetNick;
     if (!comment.empty())
@@ -43,9 +47,9 @@ void Server::kickCommand(const std::string &parameters, int client_fd) {
     oss << "\r\n";
     std::string kickMsg = oss.str();
     
-    channel->broadcastMessage(kickMsg, client_fd);
+    // Broadcast the kick message once to all channel members.
+    channel->broadcastMessage(kickMsg, -1);
     
-    send(_clients[target_fd]->getFDSocket(), kickMsg.c_str(), kickMsg.size(), MSG_NOSIGNAL);
-    
+    // Remove the kicked user from the channel.
     channel->removeMember(target_fd);
 }
