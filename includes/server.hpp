@@ -23,6 +23,7 @@ public:
     void start(const char* portStr, const char* password);
     void run();
     
+    std::string getPassword() const { return _password; }
     
     void sendError(int client_fd, int error_code, const std::string &param);
     void sendServ(int fd, const std::string &msg);

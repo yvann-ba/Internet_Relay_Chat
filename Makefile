@@ -10,7 +10,11 @@ SRCS = main.cpp src/server.cpp src/client.cpp src/utils.cpp src/channel.cpp \
 		src/cmds/modeCommand.cpp src/cmds/privmsgCommand.cpp src/cmds/topicCommand.cpp \
 		src/cmds/quitCommand.cpp
 
-SRCS_BONUS = bonus/main.cpp 
+SRCS_BONUS = bonus/main.cpp bonus/bot.cpp src/server.cpp src/client.cpp src/utils.cpp src/channel.cpp \
+		src/cmds/passCommand.cpp src/cmds/nickCommand.cpp src/cmds/userCommand.cpp \
+		src/cmds/joinCommand.cpp src/cmds/kickCommand.cpp src/cmds/inviteCommand.cpp \
+		src/cmds/modeCommand.cpp src/cmds/privmsgCommand.cpp src/cmds/topicCommand.cpp \
+		src/cmds/quitCommand.cpp
 
 OBJ_DIR = ./obj
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)

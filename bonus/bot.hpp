@@ -16,12 +16,12 @@ public:
 	Bot(Server* server, const std::string& botName);
 	virtual ~Bot();
 
-	void registerBot();
+	Server* getServer() const { return _server; }
 
-	void connectToServer();
-
-	void sendBotMessage(int clientFd, const std::string& msg);
+	void sendBotMessage(int clientFd, const std::string &target, const std::string &msg);
 	void respondToMessage(const std::string& message, int clientFd);
+
+	void registerBot(const std::string &password, int clientFd);
 
 	bool isConnected() const { return _connected; }
 	void setConnected(bool connected) { _connected = connected; }
