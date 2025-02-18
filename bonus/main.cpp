@@ -1,29 +1,24 @@
-#include "server_bonus.hpp"
 #include <iostream>
+#include <string>
+#include <cstring>
+#include <cstdlib>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <fcntl.h>
 
-volatile sig_atomic_t g_running = 1;
-
-void handleSigint(int signum)
-{
-	(void)signum;
-	std::cout << "\nSIGINT received. Shutting down server gracefully..." << std::endl;
-	g_running = 0;
+std::string generateBotResponse(const std::string& input) {
+	if (input == "!hello")
+		return "PRIVMSG bot :Hello! I am bot, your friendly bot.";
+	else if (input == "!help")
+		return "PRIVMSG bot :Commands: !hello, !joke, !help.";
+	else if (input == "!joke")
+		return "PRIVMSG bot :Why don't programmers like nature? It has too many bugs!";
+	else
+		return "PRIVMSG bot :I don't understand that command. Try !help.";
 }
 
 int main(int argc, char* argv[]) {
-	if (argc != 3) {
-		std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
-		return 1;
-	}
-	try {
-		Server server;
-		std::signal(SIGINT, handleSigint);
-		server.start(argv[1], argv[2]);
-		std::cout << "Server is ready. Keep this window open to test the connection." << std::endl;
-		server.run();
-	} catch (std::exception &e) {
-		std::cerr << "Server error: " << e.what() << std::endl;
-		return 1;
-	}
-	return 0;
+
 }

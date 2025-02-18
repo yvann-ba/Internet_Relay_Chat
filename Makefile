@@ -1,5 +1,5 @@
 NAME = ./ircserv
-NAME_BONUS = ./ircserv_bonus
+NAME_BONUS = ./client
 CPP = /bin/c++
 
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g
@@ -10,12 +10,7 @@ SRCS = main.cpp src/server.cpp src/client.cpp src/utils.cpp src/channel.cpp \
 		src/cmds/modeCommand.cpp src/cmds/privmsgCommand.cpp src/cmds/topicCommand.cpp \
 		src/cmds/quitCommand.cpp
 
-SRCS_BONUS = bonus/main.cpp bonus/server_bonus.cpp src/client.cpp src/utils.cpp src/channel.cpp \
-		src/cmds/passCommand.cpp src/cmds/nickCommand.cpp src/cmds/userCommand.cpp \
-		src/cmds/joinCommand.cpp src/cmds/kickCommand.cpp src/cmds/inviteCommand.cpp \
-		src/cmds/modeCommand.cpp src/cmds/privmsgCommand.cpp src/cmds/topicCommand.cpp \
-		src/cmds/quitCommand.cpp \
-		bonus/bot.cpp
+SRCS_BONUS = bonus/main.cpp 
 
 OBJ_DIR = ./obj
 OBJS = $(SRCS:%.cpp=$(OBJ_DIR)/%.o)
