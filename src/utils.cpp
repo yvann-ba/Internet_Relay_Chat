@@ -53,7 +53,7 @@ void Server::sendError(int client_fd, int error_code, const std::string &param) 
     if (_clients.find(client_fd) != _clients.end() && !_clients[client_fd]->getNickname().empty())
         clientNick = _clients[client_fd]->getNickname();
 
-    // Build the numeric error messages.
+    
     std::map<int, std::string> numeric_errors;
     numeric_errors[401] = ":server_name 401 " + param + " :No such nick/channel\r\n";
     numeric_errors[402] = ":server_name 402 " + param + " :No such server\r\n";
@@ -75,7 +75,7 @@ void Server::sendError(int client_fd, int error_code, const std::string &param) 
     numeric_errors[475] = ":server_name 475 " + param + " :Bad channel key (incorrect password)\r\n";
     numeric_errors[482] = ":server_name 482 " + param + " :You're not a channel operator\r\n";
 
-    // Build the visual NOTICE messages (with mIRC color codes).
+    
     std::map<int, std::string> notice_errors;
     notice_errors[401] = ":server_name NOTICE " + clientNick + " :\x03" "4Error 401: No such nick/channel\x03" "\r\n";
     notice_errors[402] = ":server_name NOTICE " + clientNick + " :\x03" "4Error 402: No such server\x03" "\r\n";
@@ -97,12 +97,12 @@ void Server::sendError(int client_fd, int error_code, const std::string &param) 
     notice_errors[475] = ":server_name NOTICE " + clientNick + " :\x03" "4Error 475: Bad channel key (incorrect password)\x03" "\r\n";
     notice_errors[482] = ":server_name NOTICE " + clientNick + " :\x03" "4Error 482: You're not a channel operator\x03" "\r\n";
 
-    // Send the numeric error reply always.
+    
     if (numeric_errors.find(error_code) != numeric_errors.end()) {
         send(client_fd, numeric_errors[error_code].c_str(), numeric_errors[error_code].length(), MSG_NOSIGNAL);
     }
 
-    // Only send the NOTICE message if the client has a valid nickname (i.e. not "*" which indicates nc).
+    
     if (clientNick != "*" && notice_errors.find(error_code) != notice_errors.end()) {
         send(client_fd, notice_errors[error_code].c_str(), notice_errors[error_code].length(), MSG_NOSIGNAL);
     }

@@ -47,9 +47,9 @@ void Server::kickCommand(const std::string &parameters, int client_fd) {
     oss << "\r\n";
     std::string kickMsg = oss.str();
     
-    // Broadcast the kick message once to all channel members.
+    
     channel->broadcastMessage(kickMsg, -1);
     
-    // Remove the kicked user from the channel.
+    
     channel->removeMember(target_fd);
 }

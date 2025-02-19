@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-// Include the bot and server headers
+
 #include "../includes/server.hpp"
 
 volatile sig_atomic_t g_running = 1;
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     int port = std::atoi(argv[2]);
 	std::string password = argv[3];
     
-    // Create the socket
+    
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    // Set up the server address structure
+    
     struct sockaddr_in server_addr;
     std::memset(&server_addr, 0, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
-    // Connect to the server
+    
     if (connect(sock, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
     {
         std::cerr << "Error: Connection to " << ip << ":" << port << " failed." << std::endl;
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
     std::cout << "Connected to server at " << ip << ":" << port << std::endl;
 
-    // Create a Server instance (assuming a default constructor)
+    
     Server server;
 
     Bot bot(&server, "Bot42");

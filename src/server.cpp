@@ -168,7 +168,7 @@ void Server::processClientCommand(std::string* clientBuffer, int client_fd) {
 	}
 }
 
-// Helper function: Remove client from all channels with logging
+
 void Server::removeClientFromChannels(int client_fd) {
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
 		Channel* channel = it->second;
